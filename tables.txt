@@ -1,0 +1,166 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(120) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    phone VARCHAR(15),
+    role VARCHAR(20) DEFAULT 'customer',
+
+    is_verified BOOLEAN DEFAULT false,
+    email_otp VARCHAR(10),
+    otp_expiry TIMESTAMP,
+
+    reset_password_otp VARCHAR(10),
+    reset_otp_expiry TIMESTAMP,
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT
+);
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    price NUMERIC(10,2) NOT NULL,
+    image_url TEXT,
+    category_id INT REFERENCES categories(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE product_inventory (
+    id SERIAL PRIMARY KEY,
+    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    quantity INT NOT NULL DEFAULT 0
+);
+CREATE TABLE cart (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE cart_items (
+    id SERIAL PRIMARY KEY,
+    cart_id INT REFERENCES cart(id) ON DELETE CASCADE,
+    product_id INT REFERENCES products(id),
+    quantity INT NOT NULL DEFAULT 1,
+    UNIQUE(cart_id, product_id)
+);
+CREATE TABLE addresses (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    address_line1 TEXT NOT NULL,
+    address_line2 TEXT,
+    city VARCHAR(100),
+    state VARCHAR(100),
+    pincode VARCHAR(20),
+    country VARCHAR(100),
+    phone VARCHAR(15),
+    is_default BOOLEAN DEFAULT FALSE
+);
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    address_id INT REFERENCES addresses(id),
+
+    total_amount NUMERIC(10,2) NOT NULL,
+
+    -- Discount handling
+    discount NUMERIC(10,2) DEFAULT 0,
+    discount_amount NUMERIC(10,2) DEFAULT 0,
+    promo_code VARCHAR(50),
+
+    final_amount NUMERIC(10,2),
+
+    status VARCHAR(30) DEFAULT 'pending',
+    payment_status VARCHAR(20) DEFAULT 'unpaid',
+    payment_method VARCHAR(50),
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(id) ON DELETE CASCADE,
+    product_id INT REFERENCES products(id),
+    quantity INT NOT NULL CHECK (quantity > 0),
+    price_at_purchase NUMERIC(10,2) NOT NULL,
+    UNIQUE(order_id, product_id)
+);
+CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(id),
+    amount NUMERIC(10,2) NOT NULL,
+    method VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'initiated',
+    transaction_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE reviews (
+    id SERIAL PRIMARY KEY,
+    product_id INT REFERENCES products(id),
+    user_id INT REFERENCES users(id),
+    rating INT CHECK (rating >=1 AND rating <=5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+
+    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    category_id INT REFERENCES categories(id) ON DELETE CASCADE,
+
+    type VARCHAR(30) NOT NULL, -- stock, price_drop, offer
+    message TEXT,
+
+    is_read BOOLEAN DEFAULT FALSE,
+    is_sent BOOLEAN DEFAULT FALSE,
+
+    channel VARCHAR(20) DEFAULT 'email',
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP
+);
+CREATE TABLE promo_codes (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    discount_type VARCHAR(20) DEFAULT 'percentage', -- percentage / fixed
+    discount_value NUMERIC(10,2) NOT NULL, -- 10 = 10%
+    min_order_amount NUMERIC(10,2) DEFAULT 0,
+    max_discount NUMERIC(10,2),
+    is_active BOOLEAN DEFAULT TRUE,
+    start_date TIMESTAMP DEFAULT NOW(),
+    end_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+INSERT INTO promo_codes (code, discount_type, discount_value, min_order_amount)
+VALUES ('WELCOME10', 'percentage', 10, 0);
+ALTER TABLE payments
+ADD COLUMN promo_code VARCHAR(50),
+ADD COLUMN discount_amount NUMERIC(10,2) DEFAULT 0;
+
+ALTER TABLE orders
+ADD COLUMN delivery_status VARCHAR(30) DEFAULT 'pending',
+ADD COLUMN estimated_delivery TIMESTAMP;
+
+CREATE TABLE delivery_profiles (
+    id SERIAL PRIMARY KEY,
+    user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+
+    vehicle_type VARCHAR(50),
+    vehicle_number VARCHAR(50),
+
+    is_available BOOLEAN DEFAULT TRUE,
+    current_location TEXT
+);
+
+ALTER TABLE deliveries
+ADD CONSTRAINT chk_delivery_status
+CHECK (status IN (
+  'assigned',
+  'picked_up',
+  'out_for_delivery',
+  'delivered',
+  'failed'
+));

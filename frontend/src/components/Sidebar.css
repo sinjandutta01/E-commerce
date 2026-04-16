@@ -1,0 +1,119 @@
+/* Sidebar wrapper */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(135deg, #c58eff, #8bb4fc);
+  color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  position: sticky;
+  top: 0;
+
+  flex-shrink: 0; /* 🔥 prevents shrinking */
+  overflow-y: auto; /* optional scroll */
+}
+
+/* Logo */
+.logo {
+  text-align: center;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: black;
+}
+
+/* Profile */
+.profile {
+  text-align: center;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.user-avatar {
+  width: 200px;
+  height: 200px;
+  /*border-radius: 50%;
+  margin-bottom: 10px;*/
+  object-fit: cover;
+}
+
+/* Menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  flex: 1;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  margin: 5px 0;
+  border-radius: 8px;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+/* Hover */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 15px;
+  margin: 5px 0;
+
+  border-radius: 10px;
+  text-decoration: none;
+
+  color: #e2e8f0;
+  font-weight: 500;
+
+  transition: all 0.3s ease;
+
+  cursor: pointer;
+}
+
+/* Hover effect like button */
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(4px);
+}
+
+/* Active button */
+.menu-item.active {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Icon alignment */
+.menu-item svg {
+  display: inline-block;
+}
+
+.logout button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logout button:hover {
+  background: #dc2626;
+}
