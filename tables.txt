@@ -139,6 +139,21 @@ VALUES ('WELCOME10', 'percentage', 10, 0);
 ALTER TABLE payments
 ADD COLUMN promo_code VARCHAR(50),
 ADD COLUMN discount_amount NUMERIC(10,2) DEFAULT 0;
+CREATE TABLE deliveries (
+    id SERIAL PRIMARY KEY,
+
+    order_id INT UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+    delivery_agent_id INT REFERENCES users(id),
+
+    status VARCHAR(30) DEFAULT 'assigned', 
+    -- assigned, picked_up, out_for_delivery, delivered, failed
+
+    assigned_at TIMESTAMP DEFAULT NOW(),
+    picked_up_at TIMESTAMP,
+    delivered_at TIMESTAMP,
+
+    notes TEXT
+);
 
 ALTER TABLE orders
 ADD COLUMN delivery_status VARCHAR(30) DEFAULT 'pending',
