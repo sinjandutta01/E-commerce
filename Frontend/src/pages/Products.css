@@ -1,0 +1,39 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+/* Content */
+.admin-content {
+  flex: 1;
+  padding: 20px;
+  background: #f8fafc;
+}.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+/* Content */
+.admin-content {
+  flex: 1;
+  padding: 20px;
+  background: #f8fafc;
+}
