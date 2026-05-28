@@ -139,3 +139,43 @@ VALUES ('WELCOME10', 'percentage', 10, 0);
 ALTER TABLE payments
 ADD COLUMN promo_code VARCHAR(50),
 ADD COLUMN discount_amount NUMERIC(10,2) DEFAULT 0;
+CREATE TABLE deliveries (
+    id SERIAL PRIMARY KEY,
+
+    order_id INT UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+    delivery_agent_id INT REFERENCES users(id),
+
+    status VARCHAR(30) DEFAULT 'assigned', 
+    -- assigned, picked_up, out_for_delivery, delivered, failed
+
+    assigned_at TIMESTAMP DEFAULT NOW(),
+    picked_up_at TIMESTAMP,
+    delivered_at TIMESTAMP,
+
+    notes TEXT
+);
+
+ALTER TABLE orders
+ADD COLUMN delivery_status VARCHAR(30) DEFAULT 'pending',
+ADD COLUMN estimated_delivery TIMESTAMP;
+
+CREATE TABLE delivery_profiles (
+    id SERIAL PRIMARY KEY,
+    user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+
+    vehicle_type VARCHAR(50),
+    vehicle_number VARCHAR(50),
+
+    is_available BOOLEAN DEFAULT TRUE,
+    current_location TEXT
+);
+
+ALTER TABLE deliveries
+ADD CONSTRAINT chk_delivery_status
+CHECK (status IN (
+  'assigned',
+  'picked_up',
+  'out_for_delivery',
+  'delivered',
+  'failed'
+));
