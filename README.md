@@ -3,3 +3,4 @@ This project focuses on developing a full-featured e-commerce website designed t
 The backend architecture emphasizes data integrity through relational constraints, cascading actions, unique fields, and validation rules. Features such as order tracking, payment processing, and customer reviews enhance the user experience, while modular design ensures scalability and maintainability. Overall, this project aims to deliver a robust, secure, and user-centric e-commerce application suitable for small to mid-scale businesses.
 <img width="869" height="413" alt="image" src="https://github.com/user-attachments/assets/bd334997-e484-4d13-a47e-3c172b366ba3" />
 <img width="839" height="401" alt="image" src="https://github.com/user-attachments/assets/ea78b2b9-2153-4583-b3d3-f26ea069b873" />
+<img width="853" height="407" alt="image" src="https://github.com/user-attachments/assets/6b3b60be-ae30-41cc-b940-4f4b8ebb1190" />
